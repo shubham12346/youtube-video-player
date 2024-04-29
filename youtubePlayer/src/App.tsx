@@ -1,8 +1,13 @@
+import Video from "./component/Video";
+import { PlayerProvider } from "./context/VideoContext";
+
 function App() {
   return (
-    <>
-      <>heelo </>
-    </>
+    <PlayerProvider>
+      <div style={{ marginLeft: "100px" }}>
+        <Video />
+      </div>
+    </PlayerProvider>
   );
 }
 
