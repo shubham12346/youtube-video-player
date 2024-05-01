@@ -1,4 +1,4 @@
-import { RefObject, useContext } from "react";
+import { RefObject, useContext, useState } from "react";
 import styled from "styled-components";
 import {
   PlayerContext,
@@ -27,6 +27,8 @@ export type TvideoToolbar = {
 
 const VideoToolbar = ({ videoElement, onVideoClick }: TvideoToolbar) => {
   const { isPlaying, progress, speed, isMuted } = useContext(PlayerContext);
+  const [tooltip, setTooltip] = useState(false);
+
   const dispatch = useContext(PlayerDispatchContext);
 
   const handleVideoProgress = (event: any) => {
@@ -35,7 +37,6 @@ const VideoToolbar = ({ videoElement, onVideoClick }: TvideoToolbar) => {
       videoElement.current.currentTime =
         (videoElement.current.duration / 100) * manualChange;
       dispatch({ type: VIDEO_PROGRESS, payload: manualChange });
-      console.log("manualChange", manualChange);
     }
   };
 
@@ -43,7 +44,6 @@ const VideoToolbar = ({ videoElement, onVideoClick }: TvideoToolbar) => {
     if (videoElement.current) {
       const speed = Number(event.target.value);
       videoElement.current.playbackRate = speed;
-      console.log("speed", speed);
       dispatch({ type: SPEED, payload: speed });
     }
   };
@@ -54,19 +54,47 @@ const VideoToolbar = ({ videoElement, onVideoClick }: TvideoToolbar) => {
       dispatch({ type: MUTE_UNMUTE, payload: !isMuted });
     }
   };
+  const formatTime = (time: number | any) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
+  const handleMouseOver = () => {
+    if (videoElement.current) {
+      setTooltip(true);
+    }
+  };
+
   return (
     <StyledViedoToolbar>
-      <div onClick={onVideoClick}>{isPlaying ? "Pause" : "Play"}</div>
-      <div>
+      <div style={{ width: "300px" }} onClick={onVideoClick}>
+        {isPlaying ? "Pause" : "Play"}
+      </div>
+      <div
+        style={{
+          position: "relative",
+          width: "300px",
+        }}
+      >
         <input
           type="range"
           min="0"
           max="100"
           value={progress}
           onChange={(e) => handleVideoProgress(e)}
+          onMouseOver={handleMouseOver}
+          onMouseOut={() => setTooltip(false)}
         />
+        {videoElement.current && tooltip && (
+          <div
+            style={{ position: "absolute", top: "-20px", background: "red" }}
+          >
+            {formatTime(Number(videoElement?.current.currentTime || 0))}
+          </div>
+        )}
       </div>
-      <div>
+
+      <div style={{ width: "300px" }}>
         <select
           className="velocity"
           value={speed}
@@ -78,7 +106,14 @@ const VideoToolbar = ({ videoElement, onVideoClick }: TvideoToolbar) => {
           <option value="2">2x</option>
         </select>
       </div>
-      <div onClick={toggleMute}>{isMuted ? "Unmute" : "Mute"}</div>
+      <div style={{ width: "300px" }} onClick={toggleMute}>
+        {isMuted ? "Unmute" : "Mute"}
+      </div>
+      {videoElement.current && (
+        <div style={{ width: "300px" }}>{`${formatTime(
+          videoElement?.current.currentTime
+        )} | ${formatTime(videoElement.current?.duration)}`}</div>
+      )}
     </StyledViedoToolbar>
   );
 };
