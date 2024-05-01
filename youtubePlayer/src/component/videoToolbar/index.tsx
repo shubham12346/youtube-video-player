@@ -86,9 +86,7 @@ const VideoToolbar = ({ videoElement, onVideoClick }: TvideoToolbar) => {
           onMouseOut={() => setTooltip(false)}
         />
         {videoElement.current && tooltip && (
-          <div
-            style={{ position: "absolute", top: "-20px", background: "red" }}
-          >
+          <div style={{ position: "absolute", top: "-20px", right: "0rem" }}>
             {formatTime(Number(videoElement?.current.currentTime || 0))}
           </div>
         )}
@@ -110,7 +108,7 @@ const VideoToolbar = ({ videoElement, onVideoClick }: TvideoToolbar) => {
         {isMuted ? "Unmute" : "Mute"}
       </div>
       {videoElement.current && (
-        <div style={{ width: "300px" }}>{`${formatTime(
+        <div style={{ width: "300px", color: "white" }}>{`${formatTime(
           videoElement?.current.currentTime
         )} | ${formatTime(videoElement.current?.duration)}`}</div>
       )}

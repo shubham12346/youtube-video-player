@@ -20,7 +20,6 @@ const Video = () => {
   const dispatch = useContext(PlayerDispatchContext);
 
   const onVideoClick = () => {
-    console.log("ispLaying", isPlaying);
     dispatch?.({ type: PAUSE_PLAY, payload: !isPlaying });
   };
 
